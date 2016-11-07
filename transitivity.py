@@ -5,14 +5,16 @@ from functools import reduce
 import time
 import csv
 
-DATA_FILE = 'data/com-amazon.ungraph.txt'
+DATA_FILES = ['com-amazon.ungraph.txt', 'twitter_combined.txt']
+#'soc-Epinions1.txt', 
 
-
-def create_graph():
+def create_graph(filename):
     """
     Initializes graph from data file
     """
-    with open(DATA_FILE, 'r') as f:
+
+    print("Initializing " + filename + "...")
+    with open(filename, 'r') as f:
 
         tuples = [(int(line.split()[0]), int(line.split()[1]))
                   for line in f if line[0] != '#']
@@ -22,7 +24,9 @@ def create_graph():
             graph[tup[0]].add(tup[1])
             graph[tup[1]].add(tup[0])
 
+        print(filename + " initialization complete")
         return graph
+    
 
 
 def get_closures(graph):
@@ -46,17 +50,16 @@ def get_closures(graph):
                 closures[pair] += 1
     return (closures, triangles, wedges)
 
-if __name__ == '__main__':
+def compute_graph_stats(filename):
     """
     Reads in graph, computes transitivity, computes histogram for closures
     """
-
     start = time.time()
 
     # graph is a dict from int (representing a node) to a set of ints
     # (representing nodes)
 
-    graph = create_graph()
+    graph = create_graph(filename)
     closures, triangles, wedges = get_closures(graph)
 
     # converts closure counts into frequency table
@@ -74,11 +77,19 @@ if __name__ == '__main__':
     print(closure_frequencies)
 
     with open('closures.csv', 'at', encoding='utf8') as csvfile:
-        #csvfile.write(DATA_FILE + '\n')
+        csvfile.write(filename + '\n')
         #csvfile.write(str(elapsed) + '\n')
         closurewriter = csv.writer(csvfile, dialect='excel', delimiter=',',
                                    quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        #closurewriter.writerow([DATA_FILE, elapsed])
         closurewriter.writerow([key for key in closure_frequencies.keys()])
         closurewriter.writerow(
             [value for value in closure_frequencies.values()])
+
+if __name__ == '__main__':
+    """
+    Computes stats for each file in DATA_FILES
+    """
+
+    for filename in DATA_FILES:
+        compute_graph_stats('data/' + filename)
+
