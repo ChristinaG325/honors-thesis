@@ -5,7 +5,10 @@ from functools import reduce
 import time
 import csv
 
-DATA_FILES = ['facebook_combined.txt', 'test2.txt',  'email-Enron.txt',  'com-youtube.ungraph.txt', 'com-amazon.ungraph.txt', 'twitter_combined.txt']
+
+DATA_FILES = ['test.txt', 'test2.txt']
+
+#DATA_FILES = ['facebook_combined.txt', 'test2.txt',  'email-Enron.txt',  'com-youtube.ungraph.txt', 'com-amazon.ungraph.txt', 'twitter_combined.txt']
 #'soc-Epinions1.txt', 
 
 def create_graph(filename):
@@ -52,9 +55,6 @@ def get_closures(graph, filename):
 
     #edges is the set of all edges from each node
 
-
-    print(len(graph.values()))
-    print(len(graph.keys()))
     for edges in graph.values():
 
         pairs = combinations(edges, 2)
@@ -74,10 +74,13 @@ def get_closures(graph, filename):
     return (closures, triangles/3, wedges, n_nodes)
 
 def print_stats(graph, triangles, wedges, closure_frequencies):
-    print(len(graph.keys()))
-    print("triangles: " + str(triangles))
-    print("wedges: " + str(wedges))
-    print("transitivity: " + str((triangles * 3)  / wedges))
+    print('\n' + "*****************************")
+    print("***      GRAPH STATS      ***")
+    print("*****************************" + '\n')
+    print("Nodes: " + str(len(graph.keys())))
+    print("Triangles: " + str(triangles))
+    print("Wedges: " + str(wedges))
+    print("Transitivity: " + str((triangles * 3)  / wedges))
     #print(closure_frequencies)
 
 def transitivity2(graph):
@@ -117,44 +120,52 @@ def transitivity2(graph):
     print("TEST TRANSITIVITY: " + str(triangles*3/wedges))
 
 
+def write_stats_to_file(filename, closure_frequencies, elapsed):
+    with open('closures.csv', 'at', encoding='utf8') as csvfile:
+        csvfile.write(filename + '\n')
+        csvfile.write("Elapsed time: " + str(elapsed) + '\n')
+        closurewriter = csv.writer(csvfile, dialect='excel', delimiter=',',
+                                   quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        closurewriter.writerow([key for key in closure_frequencies.keys()])
+        closurewriter.writerow([value for value in closure_frequencies.values()])
+
 def compute_graph_stats(filename):
     """
     Reads in graph, computes transitivity, computes histogram for closures
+
+    @param string filename      name of file to compute stats for
     """
+    print("----------     " + filename + "     ----------")
     start = time.time()
 
-    # graph is a dict from int (representing a node) to a set of ints
-    # (representing nodes)
+    # graph is a dict from int (representing a node) to a set of ints (representing nodes)
 
     graph = create_graph(filename)
 
-    transitivity2(graph)
+    #transitivity2(graph)
 
     closures, triangles, wedges, n_nodes = get_closures(graph, filename)
 
     # converts closure counts into frequency table
+
+
     print(filename + ": building frequency table ...")
     closure_frequencies = reduce(lambda prev, c: prev.update(
         {(c, prev.get(c, 0) + 1)}) or prev, closures.values(), {})
     print(filename + ": building frequency table complete")
 
+
     end = time.time()
     elapsed = end - start
+    print(filename + ": processed in " + str(elapsed))
+
 
     print_stats(graph, triangles, wedges, closure_frequencies)
+    print("----------                          ----------\n\n\n\n")
+    #pdb.set_trace()
+    write_stats_to_file(filename, closure_frequencies, elapsed)
 
-    pdb.set_trace()
 
-    with open('closures.csv', 'at', encoding='utf8') as csvfile:
-        csvfile.write(filename + '\n')
-        #csvfile.write(str(elapsed) + '\n')
-        closurewriter = csv.writer(csvfile, dialect='excel', delimiter=',',
-                                   quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        closurewriter.writerow([key for key in closure_frequencies.keys()])
-        closurewriter.writerow(
-            [value for value in closure_frequencies.values()])
-
-    print(filename + ": processed in " + str(elapsed))
 
 
 if __name__ == '__main__':
