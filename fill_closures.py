@@ -4,13 +4,13 @@ from itertools import combinations
 from functools import reduce
 import time
 import csv
-import sys
 from array import array
 
-import json
 
 DATA_FILES = ['com-amazon.ungraph.txt']
-#, 'test2.txt', , 'email-Enron.txt', ] 'facebook_combined.txt'
+#test2.txt'
+#'email-Enron.txt'
+#'facebook_combined.txt'
 
 def graph_size(graph):
     values = 0
@@ -37,23 +37,17 @@ def fill_closures_no_freq(filename):
         added_edges_this_it = 0
         for closure in closures:
             
-            if closure[0] not in graph:
-                graph[closure[0]] = array('I')
             graph[closure[0]].append(closure[1])
-
-            if closure[1] not in graph:
-                graph[closure[1]] = array('I')
             graph[closure[1]].append(closure[0])
 
-
-
-            #graph[closure[0]].append(closure[1])
-            #graph[closure[1]].append(closure[0])
             added_edges_this_it += 1
             added_edges += 1
 
+
+            ########   MEMORY DEBUG CODE   ###########
             if added_edges % 100000 == 0:
                 print("GRAPH SIZE " + str(graph_size(graph)))
+            ########   MEMORY DEBUG CODE   ###########
 
         iteration += 1
 
@@ -80,19 +74,11 @@ def create_graph(filename):
         tuples = [(int(line.split()[0]), int(line.split()[1]))
                   for line in f if line[0] != '#']
 
-        graph = {}#defaultdict(array, 'i')
+        graph = defaultdict(lambda: array('I'))
         for tup in tuples:
 
-            if tup[0] not in graph:
-                graph[tup[0]] = array('I')
             graph[tup[0]].append(tup[1])
-
-            if tup[1] not in graph:
-                graph[tup[1]] = array('I')
             graph[tup[1]].append(tup[0])
-
-            #graph[tup[0]].append(tup[1])
-            #graph[tup[1]].append(tup[0])
 
         print(filename + ": initialization complete")
         return graph
