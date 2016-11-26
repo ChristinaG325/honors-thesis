@@ -45,8 +45,8 @@ def fill_closures_no_freq(filename):
 
 
             ########   MEMORY DEBUG CODE   ###########
-            if added_edges % 100000 == 0:
-                print("GRAPH SIZE " + str(graph_size(graph)))
+            # if added_edges % 100000 == 0:
+            #     print("GRAPH SIZE " + str(graph_size(graph)))
             ########   MEMORY DEBUG CODE   ###########
 
         iteration += 1
@@ -99,17 +99,10 @@ def get_closures_no_freq(graph):
 
     for edges in graph.values():
         pairs = combinations(edges, 2)
-        ##pdb.set_trace()
-        i = 0
+
         for pair in pairs:
-            # if the pair is connected (eg. forms a triangle)
-            i += 1
-            if i % 100000 == 0:
-                print("N CLOSURES " + str(len(closures)))
-
+            # if the pair not is connected 
             if pair[0] not in graph[pair[1]]:
-
-
                 #only store closures in one direction, with smaller index first
                 closure = (pair[1], pair[0]) if pair[1] < pair[0] else pair
                 closures.add(closure)
