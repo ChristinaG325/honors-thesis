@@ -5,9 +5,16 @@ from functools import reduce
 import time
 import csv
 
-
-DATA_FILES = ['facebook_combined.txt']
-#, 'test2.txt', 'facebook_combined.txt', 'email-Enron.txt', 'com-amazon.ungraph.txt']
+OUTFILE = 'closures.csv'
+DATA_FILES = [
+'facebook_combined.txt', 
+'email-Enron.txt', 
+'com-amazon.ungraph.txt', 
+'com-youtube.ungraph.txt', 
+'soc-Epinions1.txt', 
+'twitter_combined.txt', 
+'wiki-Vote.txt'
+]
 
 #DATA_FILES = ['facebook_combined.txt', 'test2.txt',  'email-Enron.txt',  'com-youtube.ungraph.txt', 'com-amazon.ungraph.txt', 'twitter_combined.txt']
 #'soc-Epinions1.txt', 
@@ -150,7 +157,7 @@ def print_stats(graph, triangles, wedges, closure_frequencies):
     #print(closure_frequencies)
 
 def write_stats_to_file(filename, triangles, wedges, closure_frequencies, elapsed):
-    with open('closures.csv', 'at', encoding='utf8') as csvfile:
+    with open(OUTFILE, 'at', encoding='utf8') as csvfile:
         csvfile.write(filename + '\n')
         csvfile.write("Elapsed time: " + str(elapsed) + '\n')
         csvfile.write("Triangles: " + str(triangles))
@@ -212,7 +219,7 @@ def fill_closures_no_freq(filename):
         closures = get_closures_no_freq(graph)
     
 
-def compute_graph_stats(filename):
+def compute_graph_stats(filename, outfile):
     """
     Reads in graph, computes transitivity, computes histogram for closures
 
@@ -244,11 +251,11 @@ def compute_graph_stats(filename):
 
     print_stats(graph, triangles, wedges, closure_frequencies)
     print("----------------------------------------------------------\n\n\n\n")
-    #pdb.set_trace()
-    #write_stats_to_file(filename, triangles, wedges, closure_frequencies, elapsed)
 
-    #fill_closures(graph, closures)
-    fill_closures_no_freq(graph, closures)
+    write_stats_to_file(filename, triangles, wedges, closure_frequencies, elapsed)
+
+    fill_closures(graph, closures)
+    #fill_closures_no_freq(graph, closures)
 
 
 
@@ -258,6 +265,6 @@ if __name__ == '__main__':
     """
 
     for filename in DATA_FILES:
-        fill_closures_no_freq('data/' + filename)
+        fill_closures_no_freq('data/' + filename, )
         #compute_graph_stats('data/' + filename)
 

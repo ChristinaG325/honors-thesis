@@ -107,8 +107,6 @@ def get_closures_no_freq(graph):
                 closure = (pair[1], pair[0]) if pair[1] < pair[0] else pair
                 closures.add(closure)
 
-
-
     return closures
 
 
