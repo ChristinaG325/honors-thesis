@@ -265,6 +265,5 @@ if __name__ == '__main__':
     """
 
     for filename in DATA_FILES:
-        fill_closures_no_freq('data/' + filename, )
-        #compute_graph_stats('data/' + filename)
+        compute_graph_stats('data/' + filename)
 
