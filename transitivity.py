@@ -5,7 +5,7 @@ from functools import reduce
 import time
 import csv
 
-OUTFILE = 'closures.csv'
+OUTFILE = 'closures3.csv'
 DATA_FILES = [
 'facebook_combined.txt', 
 'email-Enron.txt', 
@@ -55,6 +55,13 @@ DATA_FILES = [
 #     print("TEST WEDGES: " + str(wedges))
 #     print("TEST TRANSITIVITY: " + str(triangles*3/wedges))
 
+def count_edges(graph):
+    edges = 0
+    for key in graph.keys():
+        edges += len(graph[key])
+
+    return edges/2
+
 def create_graph(filename):
     """
     Initializes graph from data file.
@@ -76,34 +83,6 @@ def create_graph(filename):
 
         print(filename + ": initialization complete")
         return graph
-
-
-def get_closures_no_freq(graph):
-    """
-    Counts closures of each size
-
-    @param dict(int, set) graph             dict mapping nodes to set of nodes its connected to
-    
-    @return set(tuple) closures       dict mapping pairs of nodes with no edge to their count of mutual neighbors
-    """
-
-    closures = set()
-
-    #edges is the set of all edges from each node
-
-    for edges in graph.values():
-        pairs = combinations(edges, 2)
-        ##pdb.set_trace()
-        for pair in pairs:
-            # if the pair is connected (eg. forms a triangle)
-            if pair[0] not in graph[pair[1]]:
-
-                #only store closures in one direction, with smaller index first
-                closure = (pair[1], pair[0]) if pair[1] < pair[0] else pair
-                closures.add(closure)
-
-    return closures
-
 
 
 def get_closures(graph, filename):
@@ -156,10 +135,12 @@ def print_stats(graph, triangles, wedges, closure_frequencies):
     print("Transitivity: " + str((triangles * 3)  / wedges))
     #print(closure_frequencies)
 
-def write_stats_to_file(filename, triangles, wedges, closure_frequencies, elapsed):
+def write_stats_to_file(filename, nodes, edges, triangles, wedges, closure_frequencies, elapsed):
     with open(OUTFILE, 'at', encoding='utf8') as csvfile:
         csvfile.write(filename + '\n')
         csvfile.write("Elapsed time: " + str(elapsed) + '\n')
+        csvfile.write("Nodes: " + str(nodes) + '\n')
+        csvfile.write("Edges: " + str(edges) + '\n')
         csvfile.write("Triangles: " + str(triangles))
         csvfile.write("Wedges: " + str(wedges))
         csvfile.write("Transitivity: " + str((triangles * 3)  / wedges))
@@ -192,44 +173,21 @@ def fill_closures(graph, closures):
 
         #make and output new histogram
 
-#fills closures but does not make keep count of the frequencies of any of the closures
-def fill_closures_no_freq(filename):
-    """
-    @param dict(int, set) graph            dict mapping nodes to set of nodes its connected to
-    @param set(tuple) closures             set of all tuples mapping with mutual friends that are not connected
 
-    """
-    graph = create_graph(filename)
-    closures = get_closures_no_freq(graph)
-
-    added_edges = 0
-    iteration = 0
-
-    #while there are still closures
-    while closures:
-        added_edges_this_it = 0
-        for closure in closures:
-            graph[closure[0]].add(closure[1])
-            graph[closure[1]].add(closure[0])
-            added_edges_this_it += 1
-            added_edges += 1
-        iteration += 1
-        print("EDGES ADDED ON IT " + str(iteration) + ": " + str(added_edges_this_it))
-        print("TOTAL ADDED EDGES: " + str(added_edges))
-        closures = get_closures_no_freq(graph)
-    
-
-def compute_graph_stats(filename, outfile):
+def compute_graph_stats(filename):
     """
     Reads in graph, computes transitivity, computes histogram for closures
 
     @param string filename      name of file to compute stats for
     """
+
+
     print("----------     " + filename + "     ----------")
     start = time.time()
 
     # graph is a dict from int (representing a node) to a set of ints (representing nodes)
     graph = create_graph(filename)
+    pdb.set_trace()
 
     #transitivity2(graph)
 
@@ -248,14 +206,12 @@ def compute_graph_stats(filename, outfile):
     elapsed = end - start
     print(filename + ": processed in " + str(elapsed))
 
-
+   
     print_stats(graph, triangles, wedges, closure_frequencies)
     print("----------------------------------------------------------\n\n\n\n")
 
-    write_stats_to_file(filename, triangles, wedges, closure_frequencies, elapsed)
-
-    fill_closures(graph, closures)
-    #fill_closures_no_freq(graph, closures)
+    #paramaters: graph, nodes, edges, triangles, wedges, closure frequency counts, elapsed time
+    write_stats_to_file(filename, len(graph.keys()), count_edges(graph), triangles, wedges, closure_frequencies, elapsed)
 
 
 
@@ -265,6 +221,5 @@ if __name__ == '__main__':
     """
 
     for filename in DATA_FILES:
-        fill_closures_no_freq('data/' + filename, )
-        #compute_graph_stats('data/' + filename)
+        compute_graph_stats('data/' + filename)
 
