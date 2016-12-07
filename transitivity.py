@@ -187,9 +187,6 @@ def compute_graph_stats(filename):
 
     # graph is a dict from int (representing a node) to a set of ints (representing nodes)
     graph = create_graph(filename)
-    pdb.set_trace()
-
-    #transitivity2(graph)
 
     closures, triangles, wedges, n_nodes = get_closures(graph, filename)
 
