@@ -7,9 +7,6 @@ import csv
 
 OUTFILE = 'closures3.csv'
 DATA_FILES = [
-'facebook_combined.txt', 
-'email-Enron.txt', 
-'com-amazon.ungraph.txt', 
 'com-youtube.ungraph.txt', 
 'soc-Epinions1.txt', 
 'twitter_combined.txt', 
