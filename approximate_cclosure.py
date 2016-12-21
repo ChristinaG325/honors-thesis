@@ -3,18 +3,20 @@ File: approxmite_cclosure.py
 -------------------
 
 Authors: Christina Gilbert
-Group: Christina Gilbert, Eric Ehizokhale, Jake Rachleff
 Computes the value of c, where c is the lowest value for 
 which a graph is approximately c-closed
 """
 import numpy as np
 from collections import defaultdict
 from itertools import combinations
+import time
 
 MATRIX_DATA_TYPE = np.uint16
 NULL_SENTINEL = np.iinfo(np.uint16).max
-DATA_FILES = ['test.txt']
+DATA_FILES = ['facebook_combined.txt']
 
+#test.txt
+#test2.txt
 
 ##### GRAPH INITALIZATION #####
 
@@ -131,11 +133,15 @@ if __name__ == '__main__':
         graph = create_graph('data/' + filename)
         print(filename + ": initialization complete")
 
+
+        matrix_start = time.time()
         print(filename + ": constructing matrix ...")
         matrix = create_matrix(graph, len(graph.keys()))
-        print(filename + ": matrix constructed ...")
+        matrix_end = time.time()
+        print(filename + ": matrix constructed")
+        print("Time elapsed: " + str(matrix_end - matrix_start))
 
-        print(matrix)
+        #print(matrix)
     # build graph
     # build matrix
     # remove rows in matrix until c is found
