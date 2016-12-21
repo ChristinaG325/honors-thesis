@@ -1,9 +1,12 @@
-#!/usr/bin/env python
+"""
+File: approxmite_cclosure.py
+-------------------
 
-__author__ = "Christina Gilbert"
-__email__ = "christyg@stanford.edu"
-__status__ = "Development"
-
+Authors: Christina Gilbert
+Group: Christina Gilbert, Eric Ehizokhale, Jake Rachleff
+Computes the value of c, where c is the lowest value for 
+which a graph is approximately c-closed
+"""
 import numpy as np
 from collections import defaultdict
 from itertools import combinations
@@ -11,6 +14,9 @@ from itertools import combinations
 MATRIX_DATA_TYPE = np.uint16
 NULL_SENTINEL = np.iinfo(np.uint16).max
 DATA_FILES = ['test.txt']
+
+
+##### GRAPH INITALIZATION #####
 
 
 def create_graph(filename):
@@ -24,7 +30,6 @@ def create_graph(filename):
     @return dict(int, set)     dict mapping nodes to set of neighbors
     """
 
-    print(filename + ": initializing ...")
     graph = defaultdict(set)
 
     with open(filename, 'r') as f:
@@ -38,8 +43,10 @@ def create_graph(filename):
 
         f.close()
 
-    print(filename + ": initialization complete")
     return graph
+
+
+##### MATRIX CONSTRUCTION #####
 
 
 def symmetrize_matrix(matrix, matrix_len):
@@ -108,6 +115,10 @@ def create_matrix(graph, n_nodes):
     symmetrize_matrix(matrix, n_nodes + 1)
     return matrix
 
+
+##### MAIN #####
+
+
 if __name__ == '__main__':
     """
     Computes the value of c, where c is the lowest
@@ -115,8 +126,15 @@ if __name__ == '__main__':
     """
 
     for filename in DATA_FILES:
+
+        print(filename + ": initializing ...")
         graph = create_graph('data/' + filename)
+        print(filename + ": initialization complete")
+
+        print(filename + ": constructing matrix ...")
         matrix = create_matrix(graph, len(graph.keys()))
+        print(filename + ": matrix constructed ...")
+
         print(matrix)
     # build graph
     # build matrix
