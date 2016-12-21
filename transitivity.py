@@ -138,9 +138,9 @@ def write_stats_to_file(filename, nodes, edges, triangles, wedges, closure_frequ
         csvfile.write("Elapsed time: " + str(elapsed) + '\n')
         csvfile.write("Nodes: " + str(nodes) + '\n')
         csvfile.write("Edges: " + str(edges) + '\n')
-        csvfile.write("Triangles: " + str(triangles))
-        csvfile.write("Wedges: " + str(wedges))
-        csvfile.write("Transitivity: " + str((triangles * 3)  / wedges))
+        csvfile.write("Triangles: " + str(triangles) + '\n')
+        csvfile.write("Wedges: " + str(wedges) + '\n')
+        csvfile.write("Transitivity: " + str((triangles * 3)  / wedges) + '\n')
 
         closurewriter = csv.writer(csvfile, dialect='excel', delimiter=',',
                                    quotechar='|', quoting=csv.QUOTE_MINIMAL)
