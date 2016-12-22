@@ -10,13 +10,21 @@ import numpy as np
 from collections import defaultdict
 from itertools import combinations
 import time
+import pdb
 
-MATRIX_DATA_TYPE = np.uint16
-NULL_SENTINEL = np.iinfo(np.uint16).max
-DATA_FILES = ['facebook_combined.txt']
+MATRIX_DATA_TYPE = np.int16
+
+#NOTE if we change the sentinal value to be non-negative, need to update the
+#remove_node code to ignore the "NULL" cells
+NULL_SENTINEL = -500
+DATA_TYPE_MAX = np.iinfo(MATRIX_DATA_TYPE).max
+DATA_FILES = ['p2p-Gnutella09.txt']
 
 #test.txt
 #test2.txt
+#facebook_combined.txt
+
+#youtube
 
 ##### GRAPH INITALIZATION #####
 
@@ -50,7 +58,7 @@ def create_graph(filename):
 
 ##### MATRIX CONSTRUCTION #####
 
-
+###function not currently in use .... ###
 def symmetrize_matrix(matrix, matrix_len):
     """
     Copies values from the top half of a triangluar matrix into the lower half
@@ -98,7 +106,7 @@ def create_matrix(graph, n_nodes):
     """
     # the snap datasets are 1-indexed, so the matrix is 1-indexed as well
     matrix_shape = (n_nodes + 1, n_nodes + 1)
-    # WARNING uint16 stores values from 0 to 65535, on very large graphs this
+    # WARNING uint16 stores values from -32768 to 32767, on very large graphs this
     # may be insufficient
     matrix = np.zeros(matrix_shape, dtype=MATRIX_DATA_TYPE)
 
@@ -108,18 +116,79 @@ def create_matrix(graph, n_nodes):
         neighbor_pairs = combinations(neighbor_set, 2)
 
         for pair in neighbor_pairs:
-            ordered_pair = (
-                pair[0], pair[1]) if pair[0] < pair[1] else (
-                pair[1], pair[0])
-            matrix[ordered_pair[0], ordered_pair[1]] += 1
+            matrix[pair[0], pair[1]] += 1
+            matrix[pair[1], pair[0]] += 1
 
     fill_connected_nodes_in_matrix(graph, matrix, n_nodes + 1)
-    symmetrize_matrix(matrix, n_nodes + 1)
     return matrix
 
 
 ##### MAIN #####
 
+def remove_node(node, matrix, matrix_len, graph):
+    matrix[node, :] = NULL_SENTINEL
+    matrix[:, node] = NULL_SENTINEL
+
+    neighbor_set = graph[node]
+    neighbor_pairs = combinations(neighbor_set, 2)
+
+    #NOTE if we change the sentinal value to be non-negative, need to update this
+    #code to ignore the "NULL" cells
+    for pair in neighbor_pairs:
+        # print("removing node " + str(node))
+        # print(pair)
+        if matrix[pair[0], pair[1]] != NULL_SENTINEL:
+            matrix[pair[0], pair[1]] -= 1
+            matrix[pair[1], pair[0]] -= 1
+    #     print(matrix)
+    # print("-- -- -- --")
+    #-1s on its row, col in the matrix
+    #in the graph, iterate over its pairs of neighbors, and decrement the closure count by 1
+
+def compute_min(maxima):
+    maxima_without_negative = [value if value != NULL_SENTINEL else DATA_TYPE_MAX for value in maxima]
+    return np.amin(maxima_without_negative)
+
+#matrix_len is the dimensions of the matrix, which is n_nodes + 1
+def compute_c(graph, matrix, matrix_len):
+    remaining_nodes = matrix_len - 1
+
+    max_minimum = 0
+
+    while(remaining_nodes > 0):
+
+
+        #the size of the largest closure each node is a part of
+        maxima = [np.amax(matrix[row]) for row in range(1, matrix_len)]
+
+        #the c-value for the "best" node (TODO: May be a better way to do this, dont have internet now)
+        
+        #TODO -- verify this function works
+        #TODO -- through this iterative process, store the maximum of the minimum values
+        #that we remove on each iteration
+        minimum = compute_min(maxima)
+        if minimum > max_minimum:
+            max_minimum = minimum
+        #I am still not totally clear on what the termination condition is, but I think it's when we
+        #remove all the nodes.
+
+        # print("===============\n\n")
+        # print("Matrix while " + str(remaining_nodes) + " remain")
+        # print(matrix)
+        print(minimum)
+        # print("\n\n===============")
+
+        #I think there is a problem with changes persisting in the matrix bewteen iterations of the while loop
+        
+        
+
+        for i, value in enumerate(maxima):
+            if value == minimum:
+                remove_node(i + 1, matrix, matrix_len, graph)
+                remaining_nodes -= 1
+
+    print ("Max Minimum: "  + str(max_minimum))
+    print ("The graph is approximately " + str(max_minimum + 1) + "-closed")
 
 if __name__ == '__main__':
     """
@@ -131,17 +200,25 @@ if __name__ == '__main__':
 
         print(filename + ": initializing ...")
         graph = create_graph('data/' + filename)
+        n_nodes = np.amax(list(graph.keys()))
+        print(n_nodes)
         print(filename + ": initialization complete")
 
 
         matrix_start = time.time()
         print(filename + ": constructing matrix ...")
-        matrix = create_matrix(graph, len(graph.keys()))
+        matrix = create_matrix(graph, n_nodes)
         matrix_end = time.time()
         print(filename + ": matrix constructed")
         print("Time elapsed: " + str(matrix_end - matrix_start))
+        print(matrix)
+        print('\n')
+        print('\n')
 
-        #print(matrix)
+
+        compute_c(graph, matrix, n_nodes + 1)
+
+        
     # build graph
     # build matrix
     # remove rows in matrix until c is found

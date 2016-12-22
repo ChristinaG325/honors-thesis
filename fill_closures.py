@@ -51,10 +51,6 @@ def fill_closures_no_freq(filename):
 
         iteration += 1
 
-
-        print("GRAPH SIZE " + str(graph_size(graph)))
-        print("CLOSURES LEN " + str(len(closures)))
-
         print("EDGES ADDED ON IT " + str(iteration) + ": " + str(added_edges_this_it))
         print("TOTAL ADDED EDGES: " + str(added_edges))
         del closures
