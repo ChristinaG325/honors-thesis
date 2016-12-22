@@ -139,8 +139,6 @@ def compute_c(graph, matrix, matrix_len):
         if minimum > max_minimum:
             max_minimum = minimum
 
-        print(minimum)
-
         for i, value in enumerate(maxima):
             if value == minimum:
                 remove_node(i + 1, matrix, matrix_len, graph)
@@ -170,9 +168,6 @@ if __name__ == '__main__':
         matrix_end = time.time()
         print(filename + ": matrix constructed")
         print("Time elapsed: " + str(matrix_end - matrix_start))
-        print(matrix)
-        print('\n')
-        print('\n')
 
         max_minimum = compute_c(graph, matrix, n_nodes + 1)
         print (filename + " is approximately " + str(max_minimum + 1) + "-closed")
