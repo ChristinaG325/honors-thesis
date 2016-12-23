@@ -12,11 +12,11 @@ from itertools import combinations
 import time
 import pdb
 
-MATRIX_DATA_TYPE = np.int16
+MATRIX_DATA_TYPE = np.int8
 
 NULL_SENTINEL = -1
 DATA_TYPE_MAX = np.iinfo(MATRIX_DATA_TYPE).max
-DATA_FILES = ['p2p-Gnutella09.txt']
+DATA_FILES = ['soc-Epinions1.txt']
 
 ##### GRAPH INITALIZATION #####
 
