@@ -16,7 +16,7 @@ MATRIX_DATA_TYPE = np.int8
 
 NULL_SENTINEL = -1
 DATA_TYPE_MAX = np.iinfo(MATRIX_DATA_TYPE).max
-DATA_FILES = ['soc-Epinions1.txt']
+DATA_FILES = ['twitter_combined.txt']
 
 ##### GRAPH INITALIZATION #####
 
