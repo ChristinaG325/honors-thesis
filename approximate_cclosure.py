@@ -16,7 +16,7 @@ MATRIX_DATA_TYPE = np.int8
 
 NULL_SENTINEL = -1
 DATA_TYPE_MAX = np.iinfo(MATRIX_DATA_TYPE).max
-DATA_FILES = ['twitter_combined.txt']
+DATA_FILES = ['twitter-combined.txt']
 
 ##### GRAPH INITALIZATION #####
 
@@ -161,6 +161,7 @@ if __name__ == '__main__':
         print(n_nodes)
         print(filename + ": initialization complete")
 
+        #Matrix Construction
 
         matrix_start = time.time()
         print(filename + ": constructing matrix ...")
@@ -169,6 +170,11 @@ if __name__ == '__main__':
         print(filename + ": matrix constructed")
         print("Time elapsed: " + str(matrix_end - matrix_start))
 
+        #Compute c
+
+        compute_c_start = time.time()
         max_minimum = compute_c(graph, matrix, n_nodes + 1)
+        compute_c_end = time.time()
         print (filename + " is approximately " + str(max_minimum + 1) + "-closed")
+        print("Time elapsed: " + str(compute_c_end - compute_c_start))
 
