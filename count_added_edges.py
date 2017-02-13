@@ -38,6 +38,17 @@ def create_graph(filename):
         return graph
 
 def fill_closures_write_stats_to_file(filename, elapsed, c, edges_added_on_iteration, total_added_edges, n_iterations):
+    """
+    Writes graph statistics to csv file
+
+    @param string filename                      name of data file
+    @param string elapsed                       total time to process file
+    @param int c                                value of c for which we c-close the graph
+    @param int[] edges_added_on_iteration       array with number of edges added on each iteration, indexed from 0
+    @param int total added edges                total number of edges added over all iterations
+    @param n_iterations                         total number of iterations to c-close graph 
+    """
+
     with open(OUTFILE, 'at') as csvfile:
         csvfile.write(filename + '\n')
 
@@ -54,8 +65,6 @@ def fill_closures_write_stats_to_file(filename, elapsed, c, edges_added_on_itera
         closurewriter.writerow(edges_added_on_iteration)
         csvfile.write('\n')
 
-
-#TODO: WRITE THIS FUNCTION
 def is_not_c_closed(closures, c):
     """
     @param c            Value of c for which graph is c-closed
@@ -82,7 +91,7 @@ def fill_closures(graph, closures, c):
     iteration = 0
 
     #while there are still closures
-    while is_not_c_closed(closures, c):                               #TODO: WRITE A FUNCTION TO CHECK IF THIS SHOULD TERMINATE EG IF THERE EXIST CLOSURES WITH C>C
+    while is_not_c_closed(closures, c):
         added_edges = 0
         print("ITERATION: " + str(iteration))
         iteration += 1
@@ -134,7 +143,7 @@ def compute_iterations_to_fix_violations(filename):
 
     for c in range(MAX_C, MAX_C - 3, -1):
         print("----------     " + filename + "     ----------")
-        print("----------     c-value:" + str(c) + "     ----------")
+        print("----------                c-value:" + str(c) + "                ----------")
         start = time.time()
 
         # graph is a dict from int (representing a node) to a set of ints (representing nodes)
@@ -152,29 +161,17 @@ def compute_iterations_to_fix_violations(filename):
         elapsed = end - start
         fill_closures_write_stats_to_file(filename, elapsed, c, edges_added_on_iteration, total_added_edges, n_iterations)
         print(filename + " on c= " +  str(c) + ": processed in " + str(elapsed))
-        print("n iterations: " + str(n_iterations))
+        print(filename + ": n iterations= " + str(n_iterations))
+        print(filename + ": total added edges= " + str(total_added_edges))
         
        
         print("----------------------------------------------------------\n\n\n\n")
-
-
-
-
-    #construct graph
-
-    #iterative fill edges process
-
-    #write to outfile
-
 
 if __name__ == '__main__':
     """
     Computes stats for each file in DATA_FILES
     """
 
-    #TODO: FIX BUG WHERE WHILE LOOP BYPASSES WHILE TRUE STATEMENT????
-
-    #TODO: Write function that checks if graph is c-closed
     #TODO: in get_closures, check to make sure we don't need to add pairs in just one direction, or make sure it's consistent (eg combinations function always does lower, higher)
     #TODO: CHANGE RANGE IN COMPUTE ITERATIONS TO FIX VIOLATIONS FROM MAX-C - 3 to 0
 
