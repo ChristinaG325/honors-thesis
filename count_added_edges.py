@@ -5,25 +5,50 @@ from functools import reduce
 import time
 import csv
 import sys
+import io
 
 OUTFILE = 'count_added_edges.csv'
 DATA_FILES = [
-'wiki-Vote.txt'
+'p2p-Gnutella08.txt'
 ]
 
-MAX_C = 50
+MAX_C = 5
+
+
+def create_graph(filename):
+    """
+    Initializes graph from data file.
+
+    @param string filename     name of file to create graph from
+    @return dict(int, set)     dict mapping nodes to set of nodes its connected to
+    """
+
+    print(filename + ": initializing ...")
+    with open(filename, 'r') as f:
+
+        tuples = [(int(line.split()[0]), int(line.split()[1]))
+                  for line in f if line[0] != '#']
+
+        graph = defaultdict(set)
+        for tup in tuples:
+            graph[tup[0]].add(tup[1])
+            graph[tup[1]].add(tup[0])
+
+        print(filename + ": initialization complete")
+        return graph
 
 def fill_closures_write_stats_to_file(filename, elapsed, c, edges_added_on_iteration, total_added_edges, n_iterations):
-    with open(OUTFILE, 'at', encoding='utf8') as csvfile:
+    with open(OUTFILE, 'at') as csvfile:
         csvfile.write(filename + '\n')
 
 
         closurewriter = csv.writer(csvfile, dialect='excel', delimiter=',',
                                    quotechar='|', quoting=csv.QUOTE_MINIMAL)
-
-        csvfile.write(["Elapsed time: "], elapsed])
-        csvfile.write(["Total Added Edges", total_added_edges])
-        csvfile.write("n iterations", n_iterations])
+        
+        closurewriter.writerow(["c", c])
+        closurewriter.writerow(["Elapsed time: ", elapsed])
+        closurewriter.writerow(["total added edges", total_added_edges])
+        closurewriter.writerow(["n iterations", n_iterations])
 
         closurewriter.writerow([i for i in range(n_iterations)])
         closurewriter.writerow(edges_added_on_iteration)
@@ -31,32 +56,36 @@ def fill_closures_write_stats_to_file(filename, elapsed, c, edges_added_on_itera
 
 
 #TODO: WRITE THIS FUNCTION
-def is_not_c_closed(c):
-	"""
-	@param c 			Value of c for which graph is c-closed
+def is_not_c_closed(closures, c):
+    """
+    @param c            Value of c for which graph is c-closed
 
-	@return bool 		TRUE if graph is not c-closed, FALSE otherwise
-	"""
-	return true
+    @return bool        True if graph is not c-closed, False otherwise
+    """
+    for closure_size in closures.values():
+      if closure_size > c:
+          return True
+    return False
+
 
 
 def fill_closures(graph, closures, c):
     """
-    @param dict(int, set) graph            		dict mapping nodes to set of nodes its connected to
-    @param dict(tuple, int) closures       		dict mapping pairs of nodes with no edge to their count of mutual neighbors
-    @param c                               		minimum value of c for which we fill closures
+    @param dict(int, set) graph                 dict mapping nodes to set of nodes its connected to
+    @param dict(tuple, int) closures            dict mapping pairs of nodes with no edge to their count of mutual neighbors
+    @param c                                    minimum value of c for which we fill closures
 
-    @return int[] edges_added_on_iteration		array of the number of edges added on each iteration, indexed from 0
+    @return int[] edges_added_on_iteration      array of the number of edges added on each iteration, indexed from 0
     """
     edges_added_on_iteration = []
 
     iteration = 0
 
     #while there are still closures
-    while is_not_c_closed(c):                               #TODO: WRITE A FUNCTION TO CHECK IF THIS SHOULD TERMINATE EG IF THERE EXIST CLOSURES WITH C>C
-    	added_edges = 0
-    	print("ITERATION: " + str(iteration))
-    	iteration += 1
+    while is_not_c_closed(closures, c):                               #TODO: WRITE A FUNCTION TO CHECK IF THIS SHOULD TERMINATE EG IF THERE EXIST CLOSURES WITH C>C
+        added_edges = 0
+        print("ITERATION: " + str(iteration))
+        iteration += 1
         for closure in closures.keys():
             if closures[closure] > c:                       #if the number of common nodes is greater than c, add an edge                                  
                 graph[closure[0]].add(closure[1])
@@ -64,9 +93,10 @@ def fill_closures(graph, closures, c):
                 added_edges += 1
         print("ADDED EDGES: " + str(added_edges))
         edges_added_on_iteration.append(added_edges)
-        closures = get_closures(graph, filename)			#update closures
+        closures = get_closures(graph, filename)            #update closures
 
-     return edges_added_on_iteration
+        
+    return edges_added_on_iteration
 
 
 def get_closures(graph, filename):
@@ -102,30 +132,30 @@ def compute_iterations_to_fix_violations(filename):
     @param string filename      name of file to compute stats for
     """
 
-        for c in range(MAX_C, MAX_C - 3, -1):
-            print("----------     " + filename + "     ----------")
-            print("----------     c-value:" + c + "     ----------")
-            start = time.time()
+    for c in range(MAX_C, MAX_C - 3, -1):
+        print("----------     " + filename + "     ----------")
+        print("----------     c-value:" + str(c) + "     ----------")
+        start = time.time()
 
-            # graph is a dict from int (representing a node) to a set of ints (representing nodes)
-            graph = create_graph(filename)
+        # graph is a dict from int (representing a node) to a set of ints (representing nodes)
+        graph = create_graph(filename)
 
-            closures = get_closures(graph, filename)
+        closures = get_closures(graph, filename)
 
-            #return value is an array of the number of edges added on each iteration
-            edges_added_on_iteration = fill_closures(graph, closures, c)
-            total_added_edges = sum(edges_added_on_iteration)
-            n_iterations = len(edges_added_on_iteration)
+        #return value is an array of the number of edges added on each iteration
+        edges_added_on_iteration = fill_closures(graph, closures, c)
+        total_added_edges = sum(edges_added_on_iteration)
+        n_iterations = len(edges_added_on_iteration)
 
 
-            end = time.time()
-            elapsed = end - start
-            fill_closures_write_stats_to_file(filename, elapsed, c, edges_added_on_iteration, total_added_edges, n_iterations)
-            print(filename + "on c: " +  c + ": processed in " + str(elapsed))
-            print("n iterations: " + str(n_iterations))
-            
-           
-            print("----------------------------------------------------------\n\n\n\n")
+        end = time.time()
+        elapsed = end - start
+        fill_closures_write_stats_to_file(filename, elapsed, c, edges_added_on_iteration, total_added_edges, n_iterations)
+        print(filename + " on c= " +  str(c) + ": processed in " + str(elapsed))
+        print("n iterations: " + str(n_iterations))
+        
+       
+        print("----------------------------------------------------------\n\n\n\n")
 
 
 
@@ -141,6 +171,8 @@ if __name__ == '__main__':
     """
     Computes stats for each file in DATA_FILES
     """
+
+    #TODO: FIX BUG WHERE WHILE LOOP BYPASSES WHILE TRUE STATEMENT????
 
     #TODO: Write function that checks if graph is c-closed
     #TODO: in get_closures, check to make sure we don't need to add pairs in just one direction, or make sure it's consistent (eg combinations function always does lower, higher)
