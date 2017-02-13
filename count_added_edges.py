@@ -12,7 +12,7 @@ DATA_FILES = [
 'p2p-Gnutella08.txt'
 ]
 
-MAX_C = 5
+MAX_C = 10
 
 
 def create_graph(filename):
@@ -141,7 +141,7 @@ def compute_iterations_to_fix_violations(filename):
     @param string filename      name of file to compute stats for
     """
 
-    for c in range(MAX_C, MAX_C - 3, -1):
+    for c in range(MAX_C, 0, -1):
         print("----------     " + filename + "     ----------")
         print("----------                c-value:" + str(c) + "                ----------")
         start = time.time()
