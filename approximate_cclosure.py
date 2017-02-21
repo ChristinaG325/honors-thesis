@@ -16,7 +16,7 @@ MATRIX_DATA_TYPE = np.int8
 
 NULL_SENTINEL = -1
 DATA_TYPE_MAX = np.iinfo(MATRIX_DATA_TYPE).max
-DATA_FILES = ['twitter-combined.txt']
+DATA_FILES = ['p2p-Gnutella06.txt', 'p2p-Gnutella05.txt', 'p2p-Gnutella04.txt']
 
 ##### GRAPH INITALIZATION #####
 
