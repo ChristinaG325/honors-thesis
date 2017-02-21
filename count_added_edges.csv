@@ -1,6 +1,46 @@
 data/p2p-Gnutella08.txt
+c,10
+Elapsed time: ,8.747243881225586
+total added edges,5761
+n iterations,17
+0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
+377,372,416,316,675,658,645,510,399,235,234,243,309,161,41,100,70
+
+data/p2p-Gnutella08.txt
+c,9
+Elapsed time: ,60.945075035095215
+total added edges,67689
+n iterations,22
+0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21
+458,507,1582,6610,13538,9126,7730,5498,5560,2443,2078,2272,1444,1672,1881,1398,1797,952,749,44,308,42
+
+data/p2p-Gnutella08.txt
+c,8
+Elapsed time: ,35.009541034698486
+total added edges,89928
+n iterations,10
+0,1,2,3,4,5,6,7,8,9
+564,878,5891,32170,27600,14358,5783,1414,1174,96
+
+data/p2p-Gnutella08.txt
+c,7
+Elapsed time: ,53.31427216529846
+total added edges,103563
+n iterations,11
+0,1,2,3,4,5,6,7,8,9,10
+691,2116,15667,65989,10580,4757,1837,888,565,311,162
+
+data/p2p-Gnutella08.txt
+c,6
+Elapsed time: ,54.48587703704834
+total added edges,111129
+n iterations,9
+0,1,2,3,4,5,6,7,8
+871,5798,52926,41122,6376,2433,1096,499,8
+
+data/p2p-Gnutella08.txt
 c,5
-Elapsed time: ,158.73386216163635
+Elapsed time: ,85.50271201133728
 total added edges,134161
 n iterations,11
 0,1,2,3,4,5,6,7,8,9,10

@@ -7,12 +7,15 @@ import csv
 import sys
 import io
 
-OUTFILE = 'count_added_edges.csv'
+DATA_DIRECTORY = 'data/'
+OUTFILE_PREFIX = 'count_added_edges_outfile/count_added_edges'
+OUTFILE_POSTFIX = '.csv'
 DATA_FILES = [
-'p2p-Gnutella08.txt'
+'test.txt'
+#'p2p-Gnutella08.txt'
 ]
 
-MAX_C = 10
+MAX_C = 50
 
 
 def create_graph(filename):
@@ -49,7 +52,10 @@ def fill_closures_write_stats_to_file(filename, elapsed, c, edges_added_on_itera
     @param n_iterations                         total number of iterations to c-close graph 
     """
 
-    with open(OUTFILE, 'at') as csvfile:
+    #remove "data/" and ".txt"
+    strip_filename = filename[len(DATA_DIRECTORY) : len(filename) - 4]
+
+    with open(OUTFILE_PREFIX + '_' + strip_filename + OUTFILE_POSTFIX, 'at') as csvfile:
         csvfile.write(filename + '\n')
 
 
@@ -176,4 +182,4 @@ if __name__ == '__main__':
     #TODO: CHANGE RANGE IN COMPUTE ITERATIONS TO FIX VIOLATIONS FROM MAX-C - 3 to 0
 
     for filename in DATA_FILES:
-        compute_iterations_to_fix_violations('data/' + filename)
+        compute_iterations_to_fix_violations(DATA_DIRECTORY + filename)

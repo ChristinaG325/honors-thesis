@@ -1,0 +1,80 @@
+data/test.txt
+c,10
+Elapsed time: ,0.0007348060607910156
+total added edges,0
+n iterations,0
+
+
+
+data/test.txt
+c,9
+Elapsed time: ,0.000347137451171875
+total added edges,0
+n iterations,0
+
+
+
+data/test.txt
+c,8
+Elapsed time: ,0.00034117698669433594
+total added edges,0
+n iterations,0
+
+
+
+data/test.txt
+c,7
+Elapsed time: ,0.0003170967102050781
+total added edges,0
+n iterations,0
+
+
+
+data/test.txt
+c,6
+Elapsed time: ,0.00031113624572753906
+total added edges,0
+n iterations,0
+
+
+
+data/test.txt
+c,5
+Elapsed time: ,0.000286102294921875
+total added edges,0
+n iterations,0
+
+
+
+data/test.txt
+c,4
+Elapsed time: ,0.0003299713134765625
+total added edges,0
+n iterations,0
+
+
+
+data/test.txt
+c,3
+Elapsed time: ,0.0002899169921875
+total added edges,0
+n iterations,0
+
+
+
+data/test.txt
+c,2
+Elapsed time: ,0.0003268718719482422
+total added edges,0
+n iterations,0
+
+
+
+data/test.txt
+c,1
+Elapsed time: ,0.0003299713134765625
+total added edges,2
+n iterations,1
+0
+2
+
