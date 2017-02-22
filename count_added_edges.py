@@ -7,12 +7,20 @@ import csv
 import sys
 import io
 
-DATA_DIRECTORY = 'data/'
-OUTFILE_PREFIX = 'count_added_edges_outfile/count_added_edges'
+DATA_DIRECTORY = 'data2/'
+OUTFILE_PREFIX = 'count_added_edges_outfolder/count_added_edges'
 OUTFILE_POSTFIX = '.csv'
 DATA_FILES = [
-'test.txt'
-#'p2p-Gnutella08.txt'
+#'p2p-Gnutella08.txt',
+#'p2p-Gnutella09.txt',
+#'p2p-Gnutella06.txt',
+#'p2p-Gnutella05.txt',
+#'ca-GrQc.txt',
+#'p2p-Gnutella04.txt',
+#'p2p-Gnutella25.txt',
+#'ca-HepTh.txt'
+'facebook.txt',
+'wiki-Vote.txt'
 ]
 
 MAX_C = 50
@@ -70,6 +78,7 @@ def fill_closures_write_stats_to_file(filename, elapsed, c, edges_added_on_itera
         closurewriter.writerow([i for i in range(n_iterations)])
         closurewriter.writerow(edges_added_on_iteration)
         csvfile.write('\n')
+        csvfile.close()
 
 def is_not_c_closed(closures, c):
     """
@@ -99,7 +108,7 @@ def fill_closures(graph, closures, c):
     #while there are still closures
     while is_not_c_closed(closures, c):
         added_edges = 0
-        print("ITERATION: " + str(iteration))
+        print("ITERATION: " + str(iteration) + " for c=" + str(c))
         iteration += 1
         for closure in closures.keys():
             if closures[closure] > c:                       #if the number of common nodes is greater than c, add an edge                                  
