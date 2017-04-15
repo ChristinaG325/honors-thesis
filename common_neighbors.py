@@ -10,12 +10,21 @@ from collections import defaultdict
 from itertools import combinations
 import time
 import pdb
+import csv
 
+OUTFILE = "common_neighbors_outfile.csv"
 MATRIX_DATA_TYPE = np.int8
 
 NULL_SENTINEL = -1
 DATA_TYPE_MAX = np.iinfo(MATRIX_DATA_TYPE).max
-DATA_FILES = ['twitter-combined.txt']
+DATA_FILES = ['p2p-Gnutella31.txt',
+              'ca-GrQc.txt',
+              'ca-HepTh.txt',
+              'facebook.txt',
+              'wiki-Vote.txt',
+              'ca-CondMat.txt',
+              'ca-HepPh.txt',
+              'email-Enron.txt']
 
 ##### GRAPH INITALIZATION #####
 
@@ -77,7 +86,7 @@ def create_matrix(graph, n_nodes):
     and self-loops are marked with NULL_SENTINEL
 
     @param dict(int, set) graph         dict mapping nodes to set of neighbors
-    @paran n_nodes int                  number of nodes in graph
+    @param n_nodes int                  number of nodes in graph
 
     @return np.matrix matrix            matrix mapping number of common neighbors
                                         shared by nodes
@@ -100,17 +109,59 @@ def create_matrix(graph, n_nodes):
     fill_connected_nodes_in_matrix(graph, matrix, n_nodes + 1)
     return matrix
 
+def find_max_c(graph, n_nodes):
+    """
+    Find the maximum value of c in an array
+    """
+    max = 0
+
+    for i in range(n_nodes):
+        for j in range(i):
+            if graph[i][j] > max:
+                max = graph[i][j]
+
+    return max
+
+def count_c(graph, n_nodes):
+    """
+    Given a matrix where graph[i][j] is the number of common neighbors between two nodes i and j
+    For each value x, 1 through c, where c is the max number of common neighbors 
+    for a non-adjacent pair, the y-value is the number of non-adjacent pairs 
+    with exactly x common neighbors
+    """
+    #frequency = defaultdict(int)
+    max_c = find_max_c(graph, n_nodes)
+    frequencies = [0] * (max_c + 1)
+
+    for i in range(n_nodes):
+        for j in range(i):
+            if graph[i][j] >= 0:
+                frequencies[graph[i][j]] += 1
+
+    return frequencies
+
+def write_to_file(filename, pair_counts):
+
+    with open(OUTFILE, 'at') as csvfile:
+        csvfile.write(filename + '\n')
+
+        closurewriter = csv.writer(csvfile, dialect='excel', delimiter=',', 
+                                   quotechar='|', quoting=csv.QUOTE_MINIMAL)
+
+        closurewriter.writerow(pair_counts)
+        csvfile.write('\n')
+        csvfile.close()
 
 if __name__ == '__main__':
     """
-    Computes the value of c, where c is the lowest
-    value for which the graph is approximately c-closed
+    For each value 1 through c, where c is the max number of common neighbors for a non-adjacent pair,
+    the y-value is the number of non-adjacent pairs with exactly x common neighbors
     """
 
     for filename in DATA_FILES:
 
         print(filename + ": initializing ...")
-        graph = create_graph('data/' + filename)
+        graph = create_graph('data2/' + filename)
         n_nodes = np.amax(list(graph.keys()))
         print(n_nodes)
         print(filename + ": initialization complete")
@@ -123,4 +174,15 @@ if __name__ == '__main__':
         matrix_end = time.time()
         print(filename + ": matrix constructed")
         print("Time elapsed: " + str(matrix_end - matrix_start))
+
+        counting_start = time.time()
+        print(filename + ": countaing pairs ...")
+        pair_counts = count_c(matrix, n_nodes)
+        print(filename + ": countaing pairs completed")
+        counting_end = time.time()
+        print("Time elapsed: " + str(counting_end - counting_start))
+
+        print pair_counts
+        write_to_file(filename, pair_counts)
+
 
